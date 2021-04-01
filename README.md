@@ -1,5 +1,9 @@
 # kaggle_env
 
+`sh kaggle_docker.sh` でdockerを起動して入る。
+`docker attach` で入る場合、`exit`で出るとコンテナが停止する。
+`attach` で入った時にログイン状態を抜けるには"control"を押した状態で"P、Q"を順番に押す。
+
 kaggle のnotebookが動いている場所のディレクトリ構造↓
 
 /kaggle
