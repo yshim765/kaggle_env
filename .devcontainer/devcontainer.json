@@ -45,4 +45,10 @@
 
 	// Comment out to connect as root instead.
 	// "remoteUser": "vscode"
+
+	// git に接続するための設定ファイルをコンテナ内にもマウントする
+	
+	"mounts": [
+		"source=${localEnv:HOME}/.gitconfig,target=/root/.gitconfig,type=bind,consistency=cached",
+	],
 }
