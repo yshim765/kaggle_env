@@ -1,0 +1,6 @@
+kaggle/input/compe_dir/*
+!kaggle/input/compe_dir/data_dir
+
+kaggle/processed_data
+kaggle/working/output
+kaggle/output
