@@ -3,4 +3,5 @@ kaggle/input/compe_dir/*
 
 kaggle/processed_data
 kaggle/working/output
+kaggle/working/mlruns
 kaggle/output
