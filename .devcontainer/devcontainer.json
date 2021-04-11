@@ -52,4 +52,7 @@
 		"source=${localEnv:HOME}/.gitconfig,target=/root/.gitconfig,type=bind,consistency=cached",
 		"source=${localEnv:HOME}/.kaggle,target=/root/.kaggle,type=bind,consistency=cached,readonly",
 	],
+
+	// GPUを使用するための設定
+	"runArgs": ["--gpus", "all"],
 }
