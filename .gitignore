@@ -1,5 +1,11 @@
 kaggle/input/compe_dir/*
 !kaggle/input/compe_dir/data_dir
+kaggle/input/image-utils/*
+!kaggle/input/image-utils/image_util_dir
+kaggle/input/nlp-utils/*
+!kaggle/input/nlp-utils/nlp_util_dir
+kaggle/input/table-utils/*
+!kaggle/input/table-utils/table_util_dir
 
 kaggle/processed_data
 kaggle/working/output
