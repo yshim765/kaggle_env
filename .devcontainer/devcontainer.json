@@ -11,42 +11,41 @@
 	// Set *default* container specific settings.json values on container create.
 	"settings": { 
 		"terminal.integrated.shell.linux": "/bin/bash",
-		"python.pythonPath": "/usr/local/bin/python",
-		"python.linting.enabled": true,
-		"python.linting.pylintEnabled": true,
-		"python.formatting.autopep8Path": "/usr/local/py-utils/bin/autopep8",
-		"python.formatting.blackPath": "/usr/local/py-utils/bin/black",
-		"python.formatting.yapfPath": "/usr/local/py-utils/bin/yapf",
-		"python.linting.banditPath": "/usr/local/py-utils/bin/bandit",
-		"python.linting.flake8Path": "/usr/local/py-utils/bin/flake8",
-		"python.linting.mypyPath": "/usr/local/py-utils/bin/mypy",
-		"python.linting.pycodestylePath": "/usr/local/py-utils/bin/pycodestyle",
-		"python.linting.pydocstylePath": "/usr/local/py-utils/bin/pydocstyle",
-		"python.linting.pylintPath": "/usr/local/py-utils/bin/pylint"
+		"python.pythonPath": "/opt/conda/bin/python",
+		"python.formatting.autopep8Path": "/opt/conda/bin/autopep8",
+		"python.formatting.blackPath": "/opt/conda/bin/black",
+		"python.formatting.yapfPath": "/opt/conda/bin/yapf",
+		"python.linting.banditPath": "/opt/conda/bin/bandit",
+		"python.linting.flake8Path": "/opt/conda/bin/flake8",
+		"python.linting.mypyPath": "/opt/conda/bin/mypy",
+		"python.linting.pycodestylePath": "/opt/conda/bin/pycodestyle",
+		"python.linting.pydocstylePath": "/opt/conda/bin/pydocstyle",
+		"python.linting.pylintPath": "/opt/conda/bin/pylint"
 	},
 
 	// Add the IDs of extensions you want installed when the container is created.
 	"extensions": [
+		"ms-python.python"
 	],
 
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
-	"forwardPorts": [8888],
+	// "forwardPorts": [8888],
 
 	// Use 'postCreateCommand' to run commands after the container is created.
 	// "postCreateCommand": "pip3 install -r requirements.txt",
 
 	// Use 'portsAttributes' to set default properties for specific forwarded ports.
-	"portsAttributes": {
-		"8888": {
-			"label": "kaggle-gpu jupyter port",
-			// "onAutoForward": "notify"
-		}
-	},
+	// "portsAttributes": {
+	// 	"8888": {
+	// 		"label": "kaggle-gpu jupyter port",
+	// 		// "onAutoForward": "notify"
+	// 	}
+	// },
 
 	// Comment out to connect as root instead.
 	// "remoteUser": "vscode"
 
-	// git, kaggle に接続するための設定ファイルをコンテナ内にもマウントする
+	// git に接続するための設定ファイルをコンテナ内にもマウントする
 	
 	"mounts": [
 		"source=${localEnv:HOME}/.gitconfig,target=/root/.gitconfig,type=bind,consistency=cached",
