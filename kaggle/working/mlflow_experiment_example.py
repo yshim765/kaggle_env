@@ -1,12 +1,12 @@
 # %%
 import mlflow
 
-import os
 from random import random, randint
 from pathlib import Path
 
-# %%
-if __name__ == "__main__":
+
+# 実験コード
+def experiment():
     # PATHの設定
     COMPETITION_NAME = "COMPETITION_NAME"
 
@@ -29,10 +29,25 @@ if __name__ == "__main__":
     # if not OUTPUT_ROOT.exists():
     #     OUTPUT_ROOT.mkdir()
 
+    # 実験コード
+    mlflow.log_param("param1", randint(0, 100))
+
+    mlflow.log_metric("foo", random())
+    mlflow.log_metric("foo", random() + 1)
+    mlflow.log_metric("foo", random() + 2)
+
+    with open(OUTPUT_WORKDIR / "test.txt", "w") as f:
+        f.write("hello world!")
+
+    mlflow.log_artifacts(OUTPUT_WORKDIR)
+
+
+# 実験の実行
+if __name__ == "__main__":
     # 実験の設定
 
     # 実験名、この試行の説明などを設定
-    # 適宜変えること
+    # 適宜変える
     EXPERIMENT_NAME = 'experiment001'
     RUN_NAME = "test run"
     RUN_DESCRIPTION = "test for mlflow runnning. this is written in notes"
@@ -43,19 +58,8 @@ if __name__ == "__main__":
     print("Running file name : {}".format(__file__))
     print("Run dexcription : {}".format(RUN_DESCRIPTION))
 
-    # 実験コード
-
     # with block を使う場合 end_run は要らない
     with mlflow.start_run(run_name=RUN_NAME) as run:
         mlflow.set_tag("mlflow.note.content", RUN_DESCRIPTION)
     
-        mlflow.log_param("param1", randint(0, 100))
-
-        mlflow.log_metric("foo", random())
-        mlflow.log_metric("foo", random() + 1)
-        mlflow.log_metric("foo", random() + 2)
-
-        with open(OUTPUT_WORKDIR / "test.txt", "w") as f:
-            f.write("hello world!")
-
-        mlflow.log_artifacts(OUTPUT_WORKDIR)
+        experiment()
