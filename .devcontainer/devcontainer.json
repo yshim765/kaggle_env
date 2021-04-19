@@ -1,6 +1,6 @@
 {
 	"name": "kaggle-gpu",
-	"image": "kaggle/python-gpu-build",
+	"image": "gcr.io/kaggle-gpu-images/python",
 	// "build": {
 	// 	"dockerfile": "Dockerfile",
 	// 	"context": "..",
