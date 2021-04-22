@@ -78,16 +78,17 @@ if mlflow.active_run():
 # %%
 # 実験コード
 # 設定値など
-seed = 777
+SEED = 777
 
-os.environ["SEED"] = str(seed)
+os.environ["SEED"] = str(SEED)
 
-random.seed(seed)
-np.random.seed(seed)
+random.seed(SEED)
+np.random.seed(SEED)
+os.environ['PYTHONHASHSEED'] = str(SEED)
 
 if mlflow.active_run():
-    mlflow.log_param("random seed", seed)
-    mlflow.log_param("numpy seed", seed)
+    mlflow.log_param("random seed", SEED)
+    mlflow.log_param("numpy seed", SEED)
 
 
 # cv用のデータの作成
@@ -116,7 +117,7 @@ data = pd.DataFrame({
     "label": [0, 0, 0, 0, 0, 1, 1, 1, 1, 1]
 })
 
-make_cv_data(data, PROC_DATA, args.number_of_cv, seed)
+make_cv_data(data, PROC_DATA, args.number_of_cv, SEED)
 
 
 # 評価関数
