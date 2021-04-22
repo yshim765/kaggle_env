@@ -171,6 +171,12 @@ for cv_phase_number in range(args.number_of_cv):
 print("cv :", cv_evaluation)
 print("mean cv :", np.mean(cv_evaluation))
 
+if mlflow.active_run():
+    mlflow.log_metrics("cv", cv_evaluation)
+
+if mlflow.active_run():
+    mlflow.log_metrics("mean cv", np.mean(cv_evaluation))
+
 # %%
 if mlflow.active_run():
     mlflow.end_run()
