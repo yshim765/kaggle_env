@@ -1,18 +1,18 @@
 import dataclasses
 from copy import deepcopy
 
-from .Data import Data
+from .data_utility import Data
 
 # 例なので自分が使いたいモデルに変える
-from sklearn.linear_model import LinearRegression
+from lightgbm import LGBMRegressor
 
 
 # モデルを格納するクラス
 @dataclasses.dataclass
 class Model:
-    def __init__(self, data: Data):
+    def __init__(self, model_param: dict):
         # 例なので自分が使いたいモデルに変える
-        self.model = LinearRegression
+        self.model = LGBMRegressor(**model_param)
 
     # モデルの学習を行う
     def train(self, data_train: Data):

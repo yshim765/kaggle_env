@@ -1,5 +1,4 @@
 import dataclasses
-from pathlib import Path
 
 import pandas as pd
 
@@ -22,7 +21,7 @@ def preprocess_data(data: Data) -> Data:
 
 
 # データの読み込みを行う
-def read_data(dirs: Path = None) -> Data:
-    data = pd.read_csv(dirs / "train.csv")
-    label = pd.read_csv(dirs / "train_label.csv")
+def read_data(param: dict) -> Data:
+    data = pd.read_csv(param["RAW_DATA_DIR"] / "train.csv")
+    label = pd.read_csv(param["RAW_DATA_DIR"] / "train_label.csv")
     return Data(data=data, label=label)
