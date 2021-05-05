@@ -26,9 +26,14 @@ except ModuleNotFoundError:
     import mlflow
 
 import numpy as np
-import pandas as pd
+# import pandas as pd
 from sklearn.model_selection import KFold
 # from tqdm import tqdm
+
+from .kaggle_utility import Data
+from .kaggle_utility import read_data
+from .kaggle_utility import preprocess_data
+from .kaggle_utility import Model
 
 # %%
 # Path の設定
@@ -68,7 +73,6 @@ Running file name : {__file__}
 Run dexcription : {RUN_DESCRIPTION}
 """)
 
-# with block を使う場合 end_run は要らない
 if not args.debug:
     mlflow.start_run(run_name=RUN_NAME)
 
@@ -91,11 +95,11 @@ if mlflow.active_run():
     mlflow.log_param("numpy seed", SEED)
 
 
-# cv用のデータの作成
+# cv用のデータの作成関数
 def make_cv_data(data, PROC_DATA, number_of_cv, seed):
     K_fold = KFold(n_splits=number_of_cv, shuffle=True, random_state=seed)
 
-    for cv_phase_number, cv_data_index in enumerate(K_fold.split(data)):
+    for cv_phase_number, cv_data_index in enumerate(K_fold.split(data.data)):
         CV_DATA_DIR = PROC_DATA / 'cv_data' / str(cv_phase_number)
         
         if CV_DATA_DIR.exists():
@@ -112,33 +116,18 @@ def make_cv_data(data, PROC_DATA, number_of_cv, seed):
         pickle.dump(data, f)
 
 
-data = pd.DataFrame({
-    "x": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
-    "label": [0, 0, 0, 0, 0, 1, 1, 1, 1, 1]
-})
-
-make_cv_data(data, PROC_DATA, args.number_of_cv, SEED)
-
-
 # 評価関数
-def evaluate(pred, true_label):
+def evaluate(data: Data):
     return 0
 
 
-def train_model(data, train_data_index):
-    return 0
+# CVの実施
+# 全データの読み込み
+raw_data = read_data()
 
+# CV用データの作成
+make_cv_data(raw_data, PROC_DATA, args.number_of_cv, SEED)
 
-def predict(model, data, val_data_index):
-    tmp_data = data.copy()
-    tmp_data = tmp_data.iloc[val_data_index]
-    tmp_data["pred"] = tmp_data["label"]
-    return tmp_data
-
-
-# モデルの学習
-# 予測結果の保存
-# 評価
 cv_evaluation = []
 
 for cv_phase_number in range(args.number_of_cv):
@@ -146,11 +135,20 @@ for cv_phase_number in range(args.number_of_cv):
     with open(PROC_DATA / 'cv_data' / str(cv_phase_number) / "cv_data_index.pkl", "rb") as f:
         cv_data_index = pickle.load(f)
 
+    raw_data_cv_train = raw_data[cv_data_index["train_index"]]
+    raw_data_cv_val = raw_data[cv_data_index["val_index"]]
+
+    data_cv_train = preprocess_data(raw_data_cv_train)
+    data_cv_val = preprocess_data(raw_data_cv_val)
+
+    # モデルの読み込み
+    model = Model()
+
     # モデルの学習
-    model = train_model(data, cv_data_index["train_index"])
+    model.train(data_cv_train)
 
     # モデルでの予測、予測の保存
-    result = predict(model, data, cv_data_index["val_index"])
+    result = model.predict(data_cv_val)
 
     CV_PRED_DIR = PROC_DATA / 'cv_pred' / str(cv_phase_number)
 
@@ -164,7 +162,7 @@ for cv_phase_number in range(args.number_of_cv):
         pickle.dump(result, f)
 
     # 結果の評価
-    cv_evaluation.append(evaluate(result["pred"], result["label"]))
+    cv_evaluation.append(evaluate(result))
 
     print(cv_data_index)
 
