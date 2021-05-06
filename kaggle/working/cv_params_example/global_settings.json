@@ -1,0 +1,9 @@
+{
+    "COMPETITION_NAME": "compe_name",
+    "EXPERIMENT_NAME": "experiment_name",
+    "RUN_NAME": "test_run",
+    "RUN_DESCRIPTION": "test run",
+    "MODULE_DIR": "kaggle_utility_base",
+    "SEED": 777,
+    "NUMBER_OF_CV": 5
+}

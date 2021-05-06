@@ -1,0 +1,4 @@
+{
+    "DATA_PATH":"/workspaces/kaggle_env/kaggle/input/compe_dir/train_data.pkl",
+    "LABEL_PATH":"/workspaces/kaggle_env/kaggle/input/compe_dir/train_label.pkl"
+}
