@@ -4,36 +4,39 @@ import argparse
 
 parser = argparse.ArgumentParser()
 
-parser.add_argument("-d", '--debug', action='store_true', default=False,
-                    help='dubug flag. If you run it with this as an argument, it will run with debug settings.')
+parser.add_argument("global_settings", help='global settings json.')
+parser.add_argument("model_settings", help='model settings json.')
+parser.add_argument("train_data_settings", help='train data conf json.')
+parser.add_argument("--val_data_settings", default=None, help='val data conf json.')
+parser.add_argument("--test_data_settings", default=None, help='test data conf json.')
+parser.add_argument("--do_val", action='store_true', default=False, help='do test data prediction')
 
 args = parser.parse_args()
 
 # %%
+import json
 import os
 import pickle
 import random
-import subprocess
 import shutil
+from importlib import import_module
 from pathlib import Path
-
-try:
-    import mlflow
-except ModuleNotFoundError:
-    subprocess.run(["pip", "install", "mlflow"])
-    import mlflow
 
 import numpy as np
 import torch
 
-from .kaggle_utility import Data
-from .kaggle_utility import read_data
-from .kaggle_utility import preprocess_data
-from .kaggle_utility import Model
+# 実験パラメータの読み込み
+with open(args.global_settings, "r") as f:
+    global_settings = json.load(f)
+
+tmp = import_module(global_settings["MODULE_DIR"])
+Data = tmp.Data
+Model = tmp.Model
+evaluate = tmp.evaluate
 
 # %%
 # Path の設定
-COMPETITION_NAME = "compe_dir"
+COMPETITION_NAME = global_settings["COMPETITION_NAME"]
 
 ROOT = Path(".").resolve().parent
 INPUT_ROOT = ROOT / "input"
@@ -56,28 +59,25 @@ if not PROC_DATA.exists():
 
 # %%
 # 実験名、この試行の説明などを設定
-# 適宜変えること
-EXPERIMENT_NAME = 'experiment001'
-RUN_NAME = "test run"
-RUN_DESCRIPTION = "test for mlflow runnning. this is written in notes"
+EXPERIMENT_NAME = global_settings["EXPERIMENT_NAME"]
+RUN_NAME = global_settings["RUN_NAME"]
+RUN_DESCRIPTION = global_settings["RUN_DESCRIPTION"]
 
-mlflow.set_experiment(EXPERIMENT_NAME)
+# print(f"""
+# Experiment name : {EXPERIMENT_NAME}
+# Running file name : {__file__}
+# Run dexcription : {RUN_DESCRIPTION}
+# """)
 
-print(f"""
-Experiment name : {EXPERIMENT_NAME}
-Running file name : {__file__}
-Run dexcription : {RUN_DESCRIPTION}
-""")
-
-if not args.debug:
-    mlflow.start_run(run_name=RUN_NAME)
-
-if mlflow.active_run():
-    mlflow.set_tag("mlflow.note.content", RUN_DESCRIPTION)
+# 結果を保存するディレクトリの指定
+SAVE_DIR = OUTPUT_WORKDIR / EXPERIMENT_NAME / RUN_NAME
+if SAVE_DIR.exists():
+    shutil.rmtree(SAVE_DIR)
+SAVE_DIR.mkdir(parents=True, exist_ok=True)
 
 # %%
 # SEEDの設定
-SEED = 777
+SEED = global_settings["SEED"]
 
 os.environ["SEED"] = str(SEED)
 
@@ -88,72 +88,66 @@ torch.manual_seed(SEED)
 torch.cuda.manual_seed(SEED)
 torch.backends.cudnn.deterministic = True
 
-if mlflow.active_run():
-    mlflow.log_param("seed", SEED)
-
 # 実験コード
+# データの読み込み
+with open(args.train_data_settings, "r") as f:
+    train_data_settings = json.load(f)
 
-# CVの実施
-# 全データの読み込み
-raw_data = read_data()
+data_train = Data(train_data_settings)
+data_train.read_data()
 
-# CV用データの作成
-make_cv_data(raw_data, PROC_DATA, args.number_of_cv, SEED)
+# データの前処理
+data_train.preprocess_data()
 
-cv_evaluation = []
+# モデルの作成
+with open(args.model_settings, "r") as f:
+    model_settings = json.load(f)
 
-for cv_phase_number in range(args.number_of_cv):
-    # cv用のデータの読み込み
-    with open(PROC_DATA / 'cv_data' / str(cv_phase_number) / "cv_data_index.pkl", "rb") as f:
-        cv_data_index = pickle.load(f)
+model = Model(model_settings)
 
-    raw_data_cv_train = raw_data[cv_data_index["train_index"]]
-    raw_data_cv_val = raw_data[cv_data_index["val_index"]]
+# モデルの学習
+model.train(data_train)
 
-    data_cv_train = preprocess_data(raw_data_cv_train)
-    data_cv_val = preprocess_data(raw_data_cv_val)
+with open(SAVE_DIR / "model.pkl", "wb") as f:
+    pickle.dump(model, f)
 
-    # モデルの読み込み
-    model = Model({})
+# モデルでの予測、予測の保存
+result_train = model.predict(data_train)
 
-    # モデルの学習
-    model.train(data_cv_train)
+result_train.postprocess_data()
+
+with open(SAVE_DIR / "result_train.pkl", "wb") as f:
+    pickle.dump(result_train, f)
+
+# 結果の評価
+score = {}
+
+score["score_train"] = evaluate(data_train, result_train)
+
+# 検証データで検証する場合
+if args.do_val:
+    with open(args.val_data_settings, "r") as f:
+        val_data_settings = json.load(f)
+
+    data_val = Data(val_data_settings)
+    data_val.read_data()
+    data_val.preprocess_data()
 
     # モデルでの予測、予測の保存
-    result = model.predict(data_cv_val)
+    result_val = model.predict(data_val)
 
-    CV_PRED_DIR = PROC_DATA / 'cv_pred' / str(cv_phase_number)
+    result_val.postprocess_data()
 
-    if CV_PRED_DIR.exists():
-        shutil.rmtree(CV_PRED_DIR)
-        CV_PRED_DIR.mkdir(parents=True)
-    else:
-        CV_PRED_DIR.mkdir(parents=True)
+    with open(SAVE_DIR / "result_val.pkl", "wb") as f:
+        pickle.dump(result_val, f)
 
-    with open(CV_PRED_DIR / "cv_pred.pkl", "wb") as f:
-        pickle.dump(result, f)
+    score["score_val"] = evaluate(data_val, result_val)
 
+with open(OUTPUT_WORKDIR / EXPERIMENT_NAME / RUN_NAME / "score.json", "w") as f:
+    json.dump(score, f)
 
-# 評価関数
-def evaluate(data: Data):
-    return 0
-
-    # 結果の評価
-    cv_evaluation.append(evaluate(result))
-
-    print(cv_data_index)
-
-print("cv :", cv_evaluation)
-print("mean cv :", np.mean(cv_evaluation))
-
-if mlflow.active_run():
-    mlflow.log_metrics("cv", cv_evaluation)
-
-if mlflow.active_run():
-    mlflow.log_metrics("mean cv", np.mean(cv_evaluation))
-
-# %%
-if mlflow.active_run():
-    mlflow.end_run()
-
-# %%
+# print(global_settings)
+# print(model_settings)
+# print(train_data_settings)
+# if args.do_val:
+#     print(val_data_settings)
