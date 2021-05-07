@@ -20,7 +20,7 @@ import random
 import shutil
 import subprocess
 from copy import deepcopy
-from pathlib import Path
+from importlib import import_module
 
 try:
     import mlflow
@@ -37,28 +37,19 @@ from sklearn.model_selection import KFold
 with open(args.global_settings, "r") as f:
     global_settings = json.load(f)
 
+tmp = import_module(global_settings["MODULE_DIR"])
+set_path = tmp.set_path
+
 # %%
 # Path の設定
-COMPETITION_NAME = global_settings["COMPETITION_NAME"]
+PATH_DICT = set_path(global_settings["COMPETITION_NAME"])
 
-ROOT = Path(".").resolve().parent
-INPUT_ROOT = ROOT / "input"
-RAW_DATA_DIR = INPUT_ROOT / COMPETITION_NAME
-WORK_DIR = ROOT / "working"
-OUTPUT_WORKDIR = WORK_DIR / "output"
-PROC_DATA = ROOT / "processed_data"
-
-if not OUTPUT_WORKDIR.exists():
-    OUTPUT_WORKDIR.mkdir()
-if not PROC_DATA.exists():
-    PROC_DATA.mkdir()
-
-# kaggle の code で回した時に output で表示する必要がない場合は
-# 以下のoutputも使用する
-# OUTPUT_ROOT = ROOT / "output"
-
-# if not OUTPUT_ROOT.exists():
-#     OUTPUT_ROOT.mkdir()
+ROOT = PATH_DICT["ROOT"]
+INPUT_ROOT = PATH_DICT["INPUT_ROOT"]
+RAW_DATA_DIR = PATH_DICT["RAW_DATA_DIR"]
+WORK_DIR = PATH_DICT["WORK_DIR"]
+OUTPUT_WORKDIR = PATH_DICT["OUTPUT_WORKDIR"]
+PROC_DATA = PATH_DICT["PROC_DATA"]
 
 # %%
 # 実験名、この試行の説明などを設定

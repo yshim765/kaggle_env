@@ -3,6 +3,8 @@ import pickle
 
 import pandas as pd
 
+from .path_utility import set_path
+
 
 # データを格納する汎用クラス
 @dataclasses.dataclass
@@ -17,11 +19,13 @@ class Data:
 
     # データの読み込みを行う
     def read_data(self) -> None:
-        with open(self.data_settings["DATA_PATH"], "rb") as f:
+        PATH_DICT = set_path(self.data_settings["COMPETITION_NAME"])
+
+        with open(PATH_DICT["RAW_DATA_DIR"] / self.data_settings["DATA_PATH"], "rb") as f:
             raw_data = pickle.load(f)
 
         if self.data_settings.get("LABEL_PATH"):
-            with open(self.data_settings["LABEL_PATH"], "rb") as f:
+            with open(PATH_DICT["RAW_DATA_DIR"] / self.data_settings["LABEL_PATH"], "rb") as f:
                 raw_label = pickle.load(f)
         else:
             raw_label = None
