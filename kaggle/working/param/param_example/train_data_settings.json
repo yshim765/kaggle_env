@@ -1,5 +1,4 @@
 {
-    "COMPETITION_NAME": "compe_dir",
     "DATA_PATH":"train_data.pkl",
     "LABEL_PATH":"train_label.pkl"
 }

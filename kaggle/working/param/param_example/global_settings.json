@@ -3,7 +3,7 @@
     "EXPERIMENT_NAME": "experiment_name",
     "RUN_NAME": "test_run",
     "RUN_DESCRIPTION": "test run",
-    "MODULE_DIR": "kaggle_utility_base",
+    "MODULE_DIR": "codes.base_code",
     "SEED": 777,
     "NUMBER_OF_CV": 5
 }
