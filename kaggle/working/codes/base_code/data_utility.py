@@ -13,19 +13,25 @@ class Data:
     # データの読み込みを行う
     def read_data(self) -> None:
         with open(self.PATH_DICT["RAW_DATA_DIR"] / self.train_data_settings["DATA_PATH"], "rb") as f:
-            data_raw_train = pickle.load(f)
+            data_train = pickle.load(f)
 
         with open(self.PATH_DICT["RAW_DATA_DIR"] / self.test_data_settings["DATA_PATH"], "rb") as f:
-            data_raw_test = pickle.load(f)
+            data_test = pickle.load(f)
 
-        self.data_raw_train = data_raw_train
-        self.data_raw_test = data_raw_test
+        self.data_train = data_train
+        self.data_test = data_test
 
 
 # 前処理をするクラス
 class DataProcessor():
     def __init__(self) -> None:
         pass
+
+    def fit(data: Data) -> None:
+        pass
+
+    def transform(data: Data) -> Data:
+        return Data
 
 
 # 評価関数
