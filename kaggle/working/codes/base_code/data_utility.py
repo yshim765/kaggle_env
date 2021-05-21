@@ -21,21 +21,11 @@ class Data:
         self.data_raw_train = data_raw_train
         self.data_raw_test = data_raw_test
 
-    # データの前処理を行う
-    def preprocess_data(self) -> None:
-        data_preprocessed_train = self.data_raw_train.copy()
-        data_preprocessed_test = self.data_raw_test.copy()
 
-        self.data_preprocessed_train = data_preprocessed_train
-        self.data_preprocessed_test = data_preprocessed_test
-
-    # データの後処理を行う
-    def postprocess_data(self) -> None:
-        data_postprocess_train = self.data_raw_train.copy()
-        data_postprocess_test = self.data_raw_test.copy()
-
-        self.data_postprocess_train = data_postprocess_train
-        self.data_postprocess_test = data_postprocess_test
+# 前処理をするクラス
+class DataProcessor():
+    def __init__(self) -> None:
+        pass
 
 
 # 評価関数
