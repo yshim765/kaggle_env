@@ -39,5 +39,5 @@ class Settings:
         if settings.get("val_data_settings"):
             self.val_data_settings = settings["val_data_settings"]
 
-        if settings.get("test_data_settings"):
-            self.test_data_settings = settings["test_data_settings"]
+        if settings.get("pred_data_settings"):
+            self.pred_data_settings = settings["pred_data_settings"]
