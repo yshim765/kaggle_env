@@ -1,7 +1,5 @@
-# %%
 # スクリプト実行時の引数の設定
 import argparse
-import importlib
 
 parser = argparse.ArgumentParser()
 
