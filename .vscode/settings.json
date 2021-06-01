@@ -2,5 +2,11 @@
     "python.pythonPath": "/opt/conda/bin/python",
     "python.linting.pylintEnabled": false,
     "python.linting.enabled": true,
-    "python.linting.flake8Enabled": true
+    "python.linting.flake8Enabled": true,
+    "python.autoComplete.extraPaths": [
+        "/workspaces/kaggle_env/kaggle/input/kaggle_utils"
+    ],
+    "python.analysis.extraPaths": [
+        "/workspaces/kaggle_env/kaggle/input/kaggle_utils"
+    ]
 }
