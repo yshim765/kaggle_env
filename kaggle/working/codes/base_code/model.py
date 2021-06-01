@@ -53,7 +53,7 @@ class Predictor:
     def predict(self, data_pred: Data) -> Data:
         MODEL_SAVE_DIR = self.PATH.SAVE_DIR / "model"
 
-        with open(MODEL_SAVE_DIR / "model.pkl", "wrb") as f:
+        with open(MODEL_SAVE_DIR / "model.pkl", "rb") as f:
             model = pickle.load(f)
 
         pred_test = pd.DataFrame(model.predict(data_pred.data), columns=["pred"])
