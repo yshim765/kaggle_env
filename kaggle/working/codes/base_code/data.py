@@ -28,9 +28,9 @@ class Data:
             self.label = label
 
 
-@dataclasses.dataclass
 class MetaData:
-    pass
+    def __init__(self) -> None:
+        pass
 
     def make_meta_data(self, data_list: List[Data]) -> None:
         pass
