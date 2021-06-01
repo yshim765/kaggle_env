@@ -1,9 +1,0 @@
-{
-    "COMPETITION_NAME": "compe_dir",
-    "EXPERIMENT_NAME": "experiment_name",
-    "RUN_NAME": "test_run",
-    "RUN_DESCRIPTION": "test run",
-    "MODULE_DIR": "codes.base_code",
-    "SEED": 777,
-    "NUMBER_OF_CV": 5
-}
