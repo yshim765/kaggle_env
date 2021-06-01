@@ -1,5 +1,6 @@
 import pickle
 import sys
+import shutil
 
 import pandas as pd
 # 例なので自分が使いたいモデルに変える
@@ -34,8 +35,9 @@ class Trainer:
 
         MODEL_SAVE_DIR = self.PATH.SAVE_DIR / "model"
 
-        if not MODEL_SAVE_DIR.exists():
-            MODEL_SAVE_DIR.mkdir(parents=True, exist_ok=True)
+        if MODEL_SAVE_DIR.exists():
+            shutil.rmtree(MODEL_SAVE_DIR)
+        MODEL_SAVE_DIR.mkdir(parents=True, exist_ok=True)
 
         with open(MODEL_SAVE_DIR / "model.pkl", "wb") as f:
             pickle.dump(self.model, f)
