@@ -1,10 +1,11 @@
-from .data_utility import Data, evaluate
-from .model_utility import Model
-from .path_utility import set_path
+from .data import Data, DataProcessor, evaluate
+from .model import Model, Trainer, Predictor
 
 __all__ = [
     "Data",
+    "DataProcessor",
     "Model",
-    "evaluate",
-    "set_path"
+    "Trainer",
+    "Predictor",
+    "evaluate"
 ]
