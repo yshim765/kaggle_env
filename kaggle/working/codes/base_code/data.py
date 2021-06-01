@@ -1,6 +1,7 @@
 import dataclasses
 import pickle
 import sys
+from typing import List
 
 sys.path.append("../../input/kaggle_utils")
 
@@ -27,15 +28,23 @@ class Data:
             self.label = label
 
 
+@dataclasses.dataclass
+class MetaData:
+    pass
+
+    def make_meta_data(self, data_list: List[Data]) -> None:
+        pass
+
+
 # 前処理をするクラス
 class DataProcessor():
     def __init__(self) -> None:
         pass
 
-    def fit(data: Data) -> None:
+    def fit(self, data: Data, meta_data: MetaData) -> None:
         pass
 
-    def transform(data: Data) -> Data:
+    def transform(selaf, data: Data) -> Data:
         return Data
 
 
