@@ -1,36 +1,31 @@
-# スクリプト実行時の引数の設定
-import argparse
-
-parser = argparse.ArgumentParser()
-
-parser.add_argument("experiment_params", help='experiment params json.')
-
-args = parser.parse_args()
-
 import json
 import os
 import random
 import sys
-from importlib import import_module
 
 import numpy as np
 import torch
 
-sys.path.append("../input/kaggle_utils")
+from .data import Data
+from .model import Model, Trainer, Predictor
+from .utility import KagglePath, Settings
 
-from kaggle_utils import KagglePath, Settings
+
+class Runner():
+    def __init__(self):
+        pass
+
+    def run(self) -> None:
+        pass
+
+    def run_cv(self, num_cv: int) -> None:
+        pass
+
+
 
 # 実験パラメータの読み込み
-with open(args.experiment_params, "r") as f:
+with open("settings.json", "r") as f:
     SETTINGS = Settings(json.load(f))
-
-tmp = import_module(SETTINGS.global_settings["MODULE_DIR"])
-Data = tmp.Data
-Model = tmp.Model
-Trainer = tmp.Trainer
-Predictor = tmp.Predictor
-evaluate = tmp.evaluate
-DataProcessor = tmp.DataProcessor
 
 # 実験名、この試行の説明などを設定
 EXPERIMENT_NAME = SETTINGS.global_settings["EXPERIMENT_NAME"]
@@ -38,7 +33,7 @@ RUN_NAME = SETTINGS.global_settings["RUN_NAME"]
 RUN_DESCRIPTION = SETTINGS.global_settings["RUN_DESCRIPTION"]
 
 # Path の設定
-PATH = KagglePath(SETTINGS.global_settings["COMPETITION_NAME"], EXPERIMENT_NAME, RUN_NAME)
+PATH = KagglePath(SETTINGS.global_settings["COMPETITION_NAME"])
 
 # %%
 # SEEDの設定

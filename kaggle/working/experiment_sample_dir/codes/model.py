@@ -1,5 +1,4 @@
 import pickle
-import sys
 import shutil
 
 import pandas as pd
@@ -7,10 +6,7 @@ import pandas as pd
 from lightgbm import LGBMRegressor
 
 from .data import Data
-
-sys.path.append("../../input/kaggle_utils")
-
-from kaggle_utils import KagglePath
+from .utility import KagglePath
 
 
 # モデルを格納するクラス
@@ -33,7 +29,7 @@ class Trainer:
     def train(self, data_train: Data) -> None:
         self.model.fit(data_train.data, data_train.label)
 
-        MODEL_SAVE_DIR = self.PATH.SAVE_DIR / "model"
+        MODEL_SAVE_DIR = self.PATH.OUTPUT_WORKDIR / "model"
 
         if MODEL_SAVE_DIR.exists():
             shutil.rmtree(MODEL_SAVE_DIR)
@@ -51,10 +47,10 @@ class Predictor:
 
     # 予測を行う
     def predict(self, data_pred: Data) -> Data:
-        MODEL_SAVE_DIR = self.PATH.SAVE_DIR / "model"
+        MODEL_SAVE_DIR = self.PATH.OUTPUT_WORKDIR / "model"
 
         with open(MODEL_SAVE_DIR / "model.pkl", "rb") as f:
             model = pickle.load(f)
 
         pred_test = pd.DataFrame(model.predict(data_pred.data), columns=["pred"])
-        pred_test.to_csv(self.PATH.SAVE_DIR / "pred_result.csv")
+        pred_test.to_csv(self.PATH.OUTPUT_WORKDIR / "pred_result.csv")

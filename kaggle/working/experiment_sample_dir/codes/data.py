@@ -1,13 +1,11 @@
 import dataclasses
 import pickle
-import sys
 from typing import List
 
-sys.path.append("../../input/kaggle_utils")
-
-from kaggle_utils import KagglePath
+from .utility import KagglePath
 
 
+# ToDo: putorch Dataset に対応する
 # データを格納する汎用クラス
 @dataclasses.dataclass
 class Data:
@@ -26,6 +24,9 @@ class Data:
                 label = pickle.load(f)
 
             self.label = label
+
+    def make_cv_data_generatore(self, num_cv: int) -> None:
+        pass
 
 
 class MetaData:

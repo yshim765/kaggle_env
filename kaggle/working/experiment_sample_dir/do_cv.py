@@ -1,13 +1,3 @@
-# スクリプト実行時の引数の設定
-import argparse
-
-parser = argparse.ArgumentParser()
-
-parser.add_argument("experiment_params", help='experiment params json.')
-
-args = parser.parse_args()
-
-# %%
 import json
 import os
 import pickle
@@ -15,7 +5,6 @@ import random
 import shutil
 import subprocess
 import sys
-from importlib import import_module
 from copy import deepcopy
 
 try:
@@ -29,16 +18,13 @@ import torch
 from tqdm import tqdm
 from sklearn.model_selection import KFold
 
-sys.path.append("../input/kaggle_utils")
-
-from kaggle_utils import KagglePath, Settings
+from .utility import KagglePath, Settings
 
 # 実験パラメータの読み込み
-with open(args.experiment_params, "r") as f:
+with open("settings.json", "r") as f:
     SETTINGS = Settings(json.load(f))
 
-tmp = import_module(SETTINGS.global_settings["MODULE_DIR"])
-Data = tmp.Data
+from .data import Data
 
 # 実験名、この試行の説明などを設定
 EXPERIMENT_NAME = SETTINGS.global_settings["EXPERIMENT_NAME"]
@@ -78,6 +64,7 @@ torch.backends.cudnn.deterministic = True
 data = Data(SETTINGS.train_data_settings, PATH)
 data.read_data()
 
+# Data クラスにデータジェネレータを追加する
 # cv用のデータの作成
 K_fold = KFold(n_splits=SETTINGS.global_settings["NUMBER_OF_CV"], shuffle=True, random_state=SEED)
 
@@ -159,9 +146,7 @@ if mlflow.active_run():
 
 # %%
 if mlflow.active_run():
-    mlflow.log_artifact(args.global_settings)
-    mlflow.log_artifact(args.model_settings)
-    mlflow.log_artifact(args.train_data_settings)
+    mlflow.log_artifacts(".")
     mlflow.log_artifact(__file__)
 
 if mlflow.active_run():
