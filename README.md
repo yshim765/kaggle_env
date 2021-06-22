@@ -21,7 +21,7 @@ kaggle のnotebookが動いている場所のディレクトリ構造↓
 他のディレクトリを作成することも可能。  
 （`/kaggle/preprocessed_data/` `/kaggle/working/output/` など）  
 
-commitした後に表示されるファイルは `kaggle/working` 下にあるやつだけらしい。  
+kaggleにsubmitした後に表示されるファイルは `kaggle/working` 下にあるやつだけらしい。  
 
 ### old tips  
 * vscodeを使わない場合  
