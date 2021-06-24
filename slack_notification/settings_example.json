@@ -1,0 +1,5 @@
+{
+    "COMPETITION_NAME":"COMPETITION",
+    "SLACK_TOKEN":"SLACK_TOKEN", # このトークンはスラックのチャンネルごとに変わるっぽいので都度変える
+    "SLACK_CHANNEL_NAME":"slack_channel_name"
+}
