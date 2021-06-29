@@ -1,4 +1,5 @@
 import pickle
+import copy
 
 import pandas as pd
 # 例なので自分が使いたいモデルに変える
@@ -47,7 +48,8 @@ class Trainer:
 
     # モデルの学習を行う
     def train(self, data_train: Data) -> None:
-        self.model.model.fit(data_train.data, data_train.label)
+        data, label = data_train[:]
+        self.model.model.fit(data, label)
 
         self.model.save()
 
@@ -60,6 +62,5 @@ class Predictor:
 
     # 予測を行う
     def predict(self, data_pred: Data) -> Data:
-        self.model.load()
-        pred_test = pd.DataFrame(self.model.model.predict(data_pred.data), columns=["pred"])
-        pred_test.to_csv(self.PATH.OUTPUT_WORKDIR / "pred_result.csv")
+        data, _ = data_pred[:]
+        return pd.DataFrame(self.model.model.predict(data), columns=["pred"])

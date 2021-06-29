@@ -1,16 +1,17 @@
-import dataclasses
 import pickle
 from typing import List
+
+from torch.utils.data import Dataset
 
 from .utility import KagglePath
 
 
 # ToDo: putorch Dataset に対応する
 # データを格納する汎用クラス
-@dataclasses.dataclass
-class Data:
-    data_settings: dict
-    PATH: KagglePath
+class Data(Dataset):
+    def __init__(self, data_settings: dict, PATH: KagglePath):
+        self.data_settings = data_settings
+        self.PATH = PATH
 
     # データの読み込みを行う
     def read_data(self) -> None:
@@ -25,8 +26,14 @@ class Data:
 
             self.label = label
 
-    def make_cv_data_generatore(self, num_cv: int) -> None:
-        pass
+    def __len__(self):
+        return len(self.data)
+
+    def __getitem__(self, idx):
+        if hasattr(self, "label"):
+            return self.data[idx], self.label[idx]
+        else:
+            return self.data[idx], None
 
 
 class MetaData:
@@ -53,5 +60,5 @@ class DataProcessor():
 from sklearn.metrics import mean_squared_error
 
 
-def evaluate(data_grand_truth: Data, data_predicted: Data) -> float:
-    return mean_squared_error(data_grand_truth.label, data_predicted.label)
+def evaluate(data_grand_truth, data_predicted) -> float:
+    return mean_squared_error(data_grand_truth, data_predicted)
