@@ -1,5 +1,4 @@
 import pickle
-import shutil
 
 import pandas as pd
 # 例なので自分が使いたいモデルに変える
@@ -15,42 +14,52 @@ class Model:
         self.model_settings = model_settings
         self.PATH = PATH
 
+    # モデルの作成
+    def build(self, params):
         # 例なので自分が使いたいモデルに変える
-        self.model = LGBMRegressor(**model_settings["LIGHTGBM_PARAM"])
+        self.model = LGBMRegressor(**self.model_settings["LIGHTGBM_PARAM"])
 
+    # モデルの保存
+    def save(self, model_path=None):
+        if model_path is None:
+            model_path = self.PATH.OUTPUT_WORKDIR / self.model_settings["OUTPUT_MODEL_DIR"]
+
+        if not model_path.exists():
+            model_path.mkdir(parents=True, exists_ok=True)
+
+        with open(model_path, "wb") as f:
+            pickle.dump(self.model, f)
+    
+    # モデルの読み込み
+    def load(self, model_path=None):
+        if model_path is None:
+            model_path = self.PATH.OUTPUT_WORKDIR / self.model_settings["OUTPUT_MODEL_DIR"]
+
+        with open(model_path, "rb") as f:
+            self.model = pickle.load(f)
+        
 
 # モデルを学習させるクラス
 class Trainer:
     def __init__(self, model: Model, PATH: KagglePath) -> None:
-        self.model = model.model
+        self.model = model
         self.PATH = PATH
 
     # モデルの学習を行う
     def train(self, data_train: Data) -> None:
-        self.model.fit(data_train.data, data_train.label)
+        self.model.model.fit(data_train.data, data_train.label)
 
-        MODEL_SAVE_DIR = self.PATH.OUTPUT_WORKDIR / "model"
-
-        if MODEL_SAVE_DIR.exists():
-            shutil.rmtree(MODEL_SAVE_DIR)
-        MODEL_SAVE_DIR.mkdir(parents=True, exist_ok=True)
-
-        with open(MODEL_SAVE_DIR / "model.pkl", "wb") as f:
-            pickle.dump(self.model, f)
+        self.model.save()
 
 
 # モデルで推論を行うクラス
 class Predictor:
     def __init__(self, model: Model, PATH: KagglePath) -> None:
-        self.model = model.model
+        self.model = model
         self.PATH = PATH
 
     # 予測を行う
     def predict(self, data_pred: Data) -> Data:
-        MODEL_SAVE_DIR = self.PATH.OUTPUT_WORKDIR / "model"
-
-        with open(MODEL_SAVE_DIR / "model.pkl", "rb") as f:
-            model = pickle.load(f)
-
-        pred_test = pd.DataFrame(model.predict(data_pred.data), columns=["pred"])
+        self.model.load()
+        pred_test = pd.DataFrame(self.model.model.predict(data_pred.data), columns=["pred"])
         pred_test.to_csv(self.PATH.OUTPUT_WORKDIR / "pred_result.csv")

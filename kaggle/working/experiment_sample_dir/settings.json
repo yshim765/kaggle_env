@@ -10,6 +10,7 @@
         "IS_SAVE_MLFLOW":false
     },
     "model_settings":{
+        "OUTPUT_MODEL_DIR":"model",
         "LIGHTGBM_PARAM":{}
     },
     "train_data_settings":{
