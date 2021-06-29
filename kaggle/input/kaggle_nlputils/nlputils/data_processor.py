@@ -29,7 +29,7 @@ class DataProcessor():
     def display_entity_on_jupyter(self, text: str) -> None:
         displacy.render(self.nlp(text), jupyter=True, style='ent')
 
-    def pre_tokenize(sentence):
+    def pre_tokenize(self, sentence):
         return self.pretokenizer.pre_tokenize_str(sentence)
 
     def tokenize(self, text, engine: str = "spacy", engine_settings: dict = {}, reset_transformers_tokenizer: bool = False) -> List[str]:
