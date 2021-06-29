@@ -1,5 +1,4 @@
 import pickle
-import copy
 
 import pandas as pd
 # 例なので自分が使いたいモデルに変える
