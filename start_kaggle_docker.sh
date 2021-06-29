@@ -1,4 +1,5 @@
 # kaggle の docker を起動するシェルスクリプト
+# 通常はvscodeのReoprn in Containerを使ったほうが便利
 
 export NAME_IMAGE=kaggle-gpu
 
