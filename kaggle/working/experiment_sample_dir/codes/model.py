@@ -15,27 +15,27 @@ class Model:
         self.PATH = PATH
 
     # モデルの作成
-    def build(self, params):
+    def build(self, params=None):
         # 例なので自分が使いたいモデルに変える
-        self.model = LGBMRegressor(**self.model_settings["LIGHTGBM_PARAM"])
+        self.model = LGBMRegressor(**self.model_settings["MODEL_PARAM"])
 
     # モデルの保存
-    def save(self, model_path=None):
-        if model_path is None:
-            model_path = self.PATH.OUTPUT_WORKDIR / self.model_settings["OUTPUT_MODEL_DIR"]
+    def save(self, model_dir_path=None):
+        if model_dir_path is None:
+            model_dir_path = self.PATH.OUTPUT_WORKDIR / self.model_settings["OUTPUT_MODEL_DIR"]
 
-        if not model_path.exists():
-            model_path.mkdir(parents=True, exists_ok=True)
+        if not model_dir_path.exists():
+            model_dir_path.mkdir(parents=True, exist_ok=True)
 
-        with open(model_path, "wb") as f:
+        with open(model_dir_path / "model.pkl", "wb") as f:
             pickle.dump(self.model, f)
     
     # モデルの読み込み
-    def load(self, model_path=None):
-        if model_path is None:
-            model_path = self.PATH.OUTPUT_WORKDIR / self.model_settings["OUTPUT_MODEL_DIR"]
+    def load(self, model_dir_path=None):
+        if model_dir_path is None:
+            model_dir_path = self.PATH.OUTPUT_WORKDIR / self.model_settings["OUTPUT_MODEL_DIR"]
 
-        with open(model_path, "rb") as f:
+        with open(model_dir_path / "model.pkl", "rb") as f:
             self.model = pickle.load(f)
         
 

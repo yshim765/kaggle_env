@@ -11,7 +11,7 @@
     },
     "model_settings":{
         "OUTPUT_MODEL_DIR":"model",
-        "LIGHTGBM_PARAM":{}
+        "MODEL_PARAM":{}
     },
     "train_data_settings":{
         "DATA_PATH":"train_data.pkl",
